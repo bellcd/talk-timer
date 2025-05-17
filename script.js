@@ -1,74 +1,126 @@
 const timerDisplay = document.querySelector("#timer-display");
 const startTimerButton = document.querySelector("#start-timer");
+const stopTimerButton = document.querySelector("#stop-timer");
+const openSettingsButton = document.querySelector("#open-settings");
+const closeSettingsButton = document.querySelector("#close-settings");
 const timerInputInMinutes = document.querySelector("#timer-input-in-minutes");
+const drawer = document.querySelector("#drawer");
 
-const INITIAL_MS = 10_000;
+const INITIAL_MS = 0;
+const TEN_HOURS_IN_MILLISECONDS = 1000 * 60 * 60 * 10;
 const ONE_HOUR_IN_MILLISECONDS = 1000 * 60 * 60;
+const TEN_MINUTES_IN_MILLISECONDS = 1000 * 60 * 10;
 const ONE_MINUTE_IN_MILLISECONDS = 1000 * 60;
+const TEN_SECONDS_IN_MILLISECONDS = 1000 * 10;
 const ONE_SECOND_IN_MILLISECONDS = 1000;
 
-function formatTime(millis) {
+let remainingMs = INITIAL_MS;
+let interval;
+
+const digitShape = {
+  hourDigitTens: 0,
+  hourDigitOnes: 0,
+  minuteDigitTens: 0,
+  minuteDigitOnes: 0,
+  secondDigitTens: 0,
+  secondDigitOnes: 0,
+  millisecondDigitHundreds: 0,
+  millisecondDigitTens: 0,
+  millisecondDigitOnes: 0,
+};
+
+const digitKeyToIdMap = new Map([
+  ["hourDigitTens", "hour-digit-tens"],
+  ["hourDigitOnes", "hour-digit-ones"],
+  ["minuteDigitTens", "minute-digit-tens"],
+  ["minuteDigitOnes", "minute-digit-ones"],
+  ["secondDigitTens", "second-digit-tens"],
+  ["secondDigitOnes", "second-digit-ones"],
+  ["millisecondDigitHundreds", "millisecond-digit-hundreds"],
+  ["millisecondDigitTens", "millisecond-digit-tens"],
+  ["millisecondDigitOnes", "millisecond-digit-ones"],
+]);
+
+function createTimeDigits(millis) {
   let remaining = millis;
-  let hours = 0;
+
+  let hourDigitTens = 0;
+  if (remaining >= TEN_HOURS_IN_MILLISECONDS) {
+    hourDigitTens = Math.floor(remaining / TEN_HOURS_IN_MILLISECONDS);
+    remaining = remaining % TEN_HOURS_IN_MILLISECONDS;
+  }
+
+  let hourDigitOnes = 0;
   if (remaining >= ONE_HOUR_IN_MILLISECONDS) {
-    hours = Math.floor(remaining / ONE_HOUR_IN_MILLISECONDS);
-    // TODO: Replace with mod operator?
-    remaining -= hours * ONE_HOUR_IN_MILLISECONDS;
+    hourDigitOnes = Math.floor(remaining / ONE_HOUR_IN_MILLISECONDS);
+    remaining = remaining % ONE_HOUR_IN_MILLISECONDS;
   }
 
-  let minutes = 0;
+  let minuteDigitTens = 0;
+  if (remaining >= TEN_MINUTES_IN_MILLISECONDS) {
+    minuteDigitTens = Math.floor(remaining / TEN_MINUTES_IN_MILLISECONDS);
+    remaining = remaining % TEN_MINUTES_IN_MILLISECONDS;
+  }
+
+  let minuteDigitOnes = 0;
   if (remaining >= ONE_MINUTE_IN_MILLISECONDS) {
-    minutes = Math.floor(remaining / ONE_MINUTE_IN_MILLISECONDS);
-    remaining -= minutes * ONE_MINUTE_IN_MILLISECONDS;
+    minuteDigitOnes = Math.floor(remaining / ONE_MINUTE_IN_MILLISECONDS);
+    remaining = remaining % ONE_MINUTE_IN_MILLISECONDS;
   }
 
-  let seconds = 0;
+  let secondDigitTens = 0;
+  if (remaining >= TEN_SECONDS_IN_MILLISECONDS) {
+    secondDigitTens = Math.floor(remaining / TEN_SECONDS_IN_MILLISECONDS);
+    remaining = remaining % TEN_SECONDS_IN_MILLISECONDS;
+  }
+
+  let secondDigitOnes = 0;
   if (remaining >= ONE_SECOND_IN_MILLISECONDS) {
-    seconds = Math.floor(remaining / ONE_SECOND_IN_MILLISECONDS);
-    remaining -= seconds * ONE_SECOND_IN_MILLISECONDS;
+    secondDigitOnes = Math.floor(remaining / ONE_SECOND_IN_MILLISECONDS);
+    remaining = remaining % ONE_SECOND_IN_MILLISECONDS;
   }
 
-  let milliseconds = 0;
+  let millisecondDigitHundreds = 0;
+  if (remaining >= 100) {
+    millisecondDigitHundreds = Math.floor(remaining / 100);
+    remaining = remaining % 100;
+  }
+
+  let millisecondDigitTens = 0;
+  if (remaining >= 10) {
+    millisecondDigitTens = Math.floor(remaining / 10);
+    remaining = remaining % 10;
+  }
+
+  let millisecondDigitOnes = 0;
   if (remaining >= 1) {
-    milliseconds = remaining;
+    millisecondDigitOnes = remaining;
   }
 
-  const h = String(hours).padStart(2, "0");
-  const m = String(minutes).padStart(2, "0");
-  const s = String(seconds).padStart(2, "0");
-  const ms = String(milliseconds).padStart(3, "0");
-  const formattedTime = `${h}:${m}:${s}:${ms}`;
-
-  return formattedTime;
+  return {
+    hourDigitTens,
+    hourDigitOnes,
+    minuteDigitTens,
+    minuteDigitOnes,
+    secondDigitTens,
+    secondDigitOnes,
+    millisecondDigitHundreds,
+    millisecondDigitTens,
+    millisecondDigitOnes,
+  };
 }
 
 function updateTimerDisplay(ms) {
-  const formattedTime = formatTime(ms);
-  timerDisplay.textContent = formattedTime;
-}
-
-let remainingMs = INITIAL_MS;
-
-function setUserInputtedTimeMs() {
-  const userInputtedTime = timerInputInMinutes.value;
-  if (userInputtedTime !== null) {
-    remainingMs = userInputtedTime * ONE_MINUTE_IN_MILLISECONDS;
-  } else {
-    remainingMs = INITIAL_MS;
+  const timeDigits = createTimeDigits(ms);
+  for (const [key, value] of Object.entries(timeDigits)) {
+    const id = digitKeyToIdMap.get(key);
+    // TODO: Does it matter that this causes multiple reflows?
+    document.querySelector(`#${id}`).value = value;
   }
 }
 
-setUserInputtedTimeMs();
-updateTimerDisplay(remainingMs);
-
-timerInputInMinutes.addEventListener("change", () => {
-  setUserInputtedTimeMs();
-  updateTimerDisplay(remainingMs);
-});
-
 function startTimer(ms) {
-  const interval = setInterval(() => {
-    const formattedTime = formatTime(remainingMs);
+  interval = setInterval(() => {
     remainingMs -= ms;
 
     if (remainingMs <= 0) {
@@ -76,12 +128,52 @@ function startTimer(ms) {
       timerDisplay.textContent = "00:00:00:000";
       console.log("Time's up!");
     } else {
-      timerDisplay.textContent = formattedTime;
+      updateTimerDisplay(remainingMs);
     }
   }, ms);
+}
+
+function stopTimer() {
+  clearInterval(interval);
 }
 
 startTimerButton.addEventListener("click", () => {
   // TODO: Randomize?
   startTimer(50);
 });
+
+stopTimerButton.addEventListener("click", () => {
+  stopTimer();
+});
+
+// openSettingsButton.addEventListener("click", () => {
+//   drawer.classList.remove("translate-x-full");
+//   drawer.classList.add("translate-x-0");
+// });
+
+// closeSettingsButton.addEventListener("click", () => {
+//   console.log("closeSettingsButton clicked");
+//   drawer.classList.remove("translate-x-0");
+//   drawer.classList.add("translate-x-full");
+// });
+
+function onDigitChange(event) {
+  // TODO: Early return if there are errors in any of the inputs
+  if (interval) {
+    // no-op
+    // there's a timer running, so ignore digit changes
+    return;
+  }
+
+  const digit = Number(event.target.value);
+
+  const multiplier = Number(event.target.dataset.multiplier);
+  remainingMs += digit * multiplier;
+}
+
+const digits = [
+  ...document.querySelectorAll(`#timer-display > input[id*="digit"]`),
+];
+for (const d of digits) {
+  d.addEventListener("change", onDigitChange);
+}
