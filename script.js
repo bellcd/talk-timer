@@ -110,8 +110,7 @@ function createTimeDigits(millis) {
   };
 }
 
-function updateTimerDisplay(ms) {
-  const timeDigits = createTimeDigits(ms);
+function updateTimerDisplay(timeDigits) {
   for (const [key, value] of Object.entries(timeDigits)) {
     const id = digitKeyToIdMap.get(key);
     // TODO: Does it matter that this causes multiple reflows?
@@ -125,10 +124,23 @@ function startTimer(ms) {
 
     if (remainingMs <= 0) {
       clearInterval(interval);
-      timerDisplay.textContent = "00:00:00:000";
+      const timeDigits = {
+        hourDigitTens: 0,
+        hourDigitOnes: 0,
+        minuteDigitTens: 0,
+        minuteDigitOnes: 0,
+        secondDigitTens: 0,
+        secondDigitOnes: 0,
+        millisecondDigitHundreds: 0,
+        millisecondDigitTens: 0,
+        millisecondDigitOnes: 0,
+      };
+
+      updateTimerDisplay(timeDigits);
       console.log("Time's up!");
     } else {
-      updateTimerDisplay(remainingMs);
+      const timeDigits = createTimeDigits(remainingMs);
+      updateTimerDisplay(timeDigits);
     }
   }, ms);
 }
@@ -177,3 +189,11 @@ const digits = [
 for (const d of digits) {
   d.addEventListener("change", onDigitChange);
 }
+
+document
+  .querySelectorAll('#timer-display input[type="number"]')
+  .forEach((input) => {
+    input.addEventListener("focus", function () {
+      this.select();
+    });
+  });
