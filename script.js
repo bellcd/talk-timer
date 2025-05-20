@@ -1,8 +1,6 @@
 const timerDisplay = document.querySelector("#timer-display");
 const startTimerButton = document.querySelector("#start-timer");
 const stopTimerButton = document.querySelector("#stop-timer");
-const openSettingsButton = document.querySelector("#open-settings");
-const closeSettingsButton = document.querySelector("#close-settings");
 const timerInputInMinutes = document.querySelector("#timer-input-in-minutes");
 const drawer = document.querySelector("#drawer");
 
@@ -157,17 +155,6 @@ startTimerButton.addEventListener("click", () => {
 stopTimerButton.addEventListener("click", () => {
   stopTimer();
 });
-
-// openSettingsButton.addEventListener("click", () => {
-//   drawer.classList.remove("translate-x-full");
-//   drawer.classList.add("translate-x-0");
-// });
-
-// closeSettingsButton.addEventListener("click", () => {
-//   console.log("closeSettingsButton clicked");
-//   drawer.classList.remove("translate-x-0");
-//   drawer.classList.add("translate-x-full");
-// });
 
 function onDigitChange(event) {
   // TODO: Early return if there are errors in any of the inputs
