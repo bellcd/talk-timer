@@ -4,7 +4,7 @@
 
 :root {
   /* This was simply trial and error to figure out what ~fits on a screen. */
-  --timer-dislpay-font-size: calc(100vw / 6);
+  --timer-display-font-size: calc(100vw / 6);
 }
 
 /* Hide number input arrows for Chrome, Safari, Edge, Opera */
@@ -19,14 +19,12 @@ input[type="number"] {
   -moz-appearance: textfield;
 }
 
-/* Center the timer display container */
 #timer-display {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-/* Make the number inputs very large and prominent */
 #timer-display input[type="number"],
 #timer-display span {
   text-align: center;
@@ -35,11 +33,12 @@ input[type="number"] {
   padding-inline: unset;
   padding-block: unset;
   padding: unset;
-  font-size: var(--timer-dislpay-font-size);
+  font-size: var(--timer-display-font-size);
   max-width: 1ch;
+  color: unset;
 }
 #timer-display span {
-  margin-top: calc(var(--timer-dislpay-font-size) * -0.15);
+  margin-top: calc(var(--timer-display-font-size) * -0.15);
 }
 
 #timer-display input[type="number"]:focus {
@@ -47,7 +46,6 @@ input[type="number"] {
   box-shadow: 0 0 0 4px rgba(0, 116, 217, 0.15);
 }
 
-/* Remove background color from body for contrast */
 body {
   background: #f5f5f5;
   margin: 0;

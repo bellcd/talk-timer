@@ -43,6 +43,7 @@ const digitKeyToIdMap = new Map([
 function createTimeDigits(millis) {
   let remaining = millis;
 
+  // TODO: There's a bug in the hours and minutes digits
   let hourDigitTens = 0;
   if (remaining >= TEN_HOURS_IN_MILLISECONDS) {
     hourDigitTens = Math.floor(remaining / TEN_HOURS_IN_MILLISECONDS);
@@ -197,7 +198,8 @@ function getTargetId(sourceId) {
       throw new Error(`Unknown sourceId: ${sourceId}`);
   }
 }
-
+// TODO: Why do the 'e' and '.' characters appear?
+// TODO: Pressing any key outside of 0123456789 should have no effect.
 function onDigitInput(event) {
   // TODO: Early return if there are errors in any of the inputs
   if (interval) {
@@ -253,5 +255,3 @@ function enableTimerInputs() {
     input.removeAttribute("disabled");
   }
 }
-
-// TODO: Buttons should be disabled in certain states.
