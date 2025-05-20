@@ -156,7 +156,32 @@ stopTimerButton.addEventListener("click", () => {
   stopTimer();
 });
 
-function onDigitChange(event) {
+function getTargetId(sourceId) {
+  switch (sourceId) {
+    case "hour-digit-tens":
+      return "hour-digit-ones";
+    case "hour-digit-ones":
+      return "minute-digit-tens";
+    case "minute-digit-tens":
+      return "minute-digit-ones";
+    case "minute-digit-ones":
+      return "second-digit-tens";
+    case "second-digit-tens":
+      return "second-digit-ones";
+    case "second-digit-ones":
+      return "millisecond-digit-hundreds";
+    case "millisecond-digit-hundreds":
+      return "millisecond-digit-tens";
+    case "millisecond-digit-tens":
+      return "millisecond-digit-ones";
+    case "millisecond-digit-ones":
+      return "start-timer";
+    default:
+      throw new Error(`Unknown sourceId: ${sourceId}`);
+  }
+}
+
+function onDigitInput(event) {
   // TODO: Early return if there are errors in any of the inputs
   if (interval) {
     // no-op
@@ -168,13 +193,18 @@ function onDigitChange(event) {
 
   const multiplier = Number(event.target.dataset.multiplier);
   remainingMs += digit * multiplier;
+
+  const sourceId = event.target.id;
+  const targetId = getTargetId(sourceId);
+  const target = document.querySelector(`#${targetId}`);
+  target.focus();
 }
 
 const digits = [
   ...document.querySelectorAll(`#timer-display > input[id*="digit"]`),
 ];
 for (const d of digits) {
-  d.addEventListener("change", onDigitChange);
+  d.addEventListener("input", onDigitInput);
 }
 
 document
