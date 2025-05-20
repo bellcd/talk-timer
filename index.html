@@ -11,7 +11,7 @@
       <!-- TODO: Add CSS for the :invalid state -->
       <input
         id="hour-digit-tens"
-        data-multiplier="1296000000"
+        data-multiplier="36000000"
         type="number"
         min="0"
         max="9"
@@ -20,7 +20,7 @@
       />
       <input
         id="hour-digit-ones"
-        data-multiplier="21600000"
+        data-multiplier="3600000"
         type="number"
         min="0"
         max="9"
@@ -31,7 +31,7 @@
       <span>:</span>
       <input
         id="minute-digit-tens"
-        data-multiplier="360000"
+        data-multiplier="600000"
         type="number"
         min="0"
         max="9"
@@ -96,8 +96,9 @@
       />
     </div>
 
-    <button id="start-timer" type="button">Start timer</button>
-    <button id="stop-timer" type="button">Stop timer</button>
+    <button id="start-timer" type="button">Start</button>
+    <button id="pause-timer" type="button">Pause</button>
+    <button id="reset-timer" type="button">Reset</button>
     <script src="script.js"></script>
   </body>
 </html>

@@ -1,3 +1,12 @@
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  /* This was simply trial and error to figure out what ~fits on a screen. */
+  --timer-dislpay-font-size: calc(100vw / 6);
+}
+
 /* Hide number input arrows for Chrome, Safari, Edge, Opera */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
@@ -10,8 +19,94 @@ input[type="number"] {
   -moz-appearance: textfield;
 }
 
-input[type="number"] {
-  background-color: red;
-  width: 1rem;
+/* Center the timer display container */
+#timer-display {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Make the number inputs very large and prominent */
+#timer-display input[type="number"],
+#timer-display span {
   text-align: center;
+  border: none;
+  background: transparent;
+  padding-inline: unset;
+  padding-block: unset;
+  padding: unset;
+  font-size: var(--timer-dislpay-font-size);
+  max-width: 1ch;
+}
+#timer-display span {
+  margin-top: calc(var(--timer-dislpay-font-size) * -0.15);
+}
+
+#timer-display input[type="number"]:focus {
+  border-color: #0074d9;
+  box-shadow: 0 0 0 4px rgba(0, 116, 217, 0.15);
+}
+
+/* Remove background color from body for contrast */
+body {
+  background: #f5f5f5;
+  margin: 0;
+  padding: 0;
+}
+
+button#start-timer,
+button#pause-timer {
+  display: inline-block;
+  margin: 2rem 1rem 0 1rem;
+  padding: 1.2rem 3rem;
+  font-size: 2.2rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 0.7em;
+  cursor: pointer;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+
+button#start-timer {
+  background: #2ecc40;
+  color: #fff;
+}
+
+button#start-timer:hover,
+button#start-timer:focus {
+  background: #27ae38;
+  box-shadow: 0 0 0 6px rgba(46, 204, 64, 0.15);
+}
+
+button#pause-timer {
+  background: #ff4136;
+  color: #fff;
+}
+
+button#pause-timer:hover,
+button#pause-timer:focus {
+  background: #c0392b;
+  box-shadow: 0 0 0 6px rgba(255, 65, 54, 0.15);
+}
+
+button#reset-timer {
+  display: inline-block;
+  margin: 2rem 1rem 0 1rem;
+  padding: 1.2rem 3rem;
+  font-size: 2.2rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 0.7em;
+  cursor: pointer;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+  background: #ffdc00;
+  color: #222;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+
+button#reset-timer:hover,
+button#reset-timer:focus {
+  background: #ffe066;
+  box-shadow: 0 0 0 6px rgba(255, 220, 0, 0.15);
 }

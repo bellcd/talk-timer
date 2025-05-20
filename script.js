@@ -1,6 +1,7 @@
 const timerDisplay = document.querySelector("#timer-display");
 const startTimerButton = document.querySelector("#start-timer");
-const stopTimerButton = document.querySelector("#stop-timer");
+const pauseTimerButton = document.querySelector("#pause-timer");
+const resetTimerButton = document.querySelector("#reset-timer");
 const timerInputInMinutes = document.querySelector("#timer-input-in-minutes");
 const drawer = document.querySelector("#drawer");
 
@@ -13,7 +14,7 @@ const TEN_SECONDS_IN_MILLISECONDS = 1000 * 10;
 const ONE_SECOND_IN_MILLISECONDS = 1000;
 
 let remainingMs = INITIAL_MS;
-let interval;
+let interval = undefined;
 
 const digitShape = {
   hourDigitTens: 0,
@@ -42,7 +43,6 @@ const digitKeyToIdMap = new Map([
 function createTimeDigits(millis) {
   let remaining = millis;
 
-  // TODO: There's a bug in the hours and minutes digits
   let hourDigitTens = 0;
   if (remaining >= TEN_HOURS_IN_MILLISECONDS) {
     hourDigitTens = Math.floor(remaining / TEN_HOURS_IN_MILLISECONDS);
@@ -118,11 +118,14 @@ function updateTimerDisplay(timeDigits) {
 }
 
 function startTimer(ms) {
+  disableTimerInputs();
+
   interval = setInterval(() => {
     remainingMs -= ms;
 
     if (remainingMs <= 0) {
       clearInterval(interval);
+      interval = undefined;
       const timeDigits = {
         hourDigitTens: 0,
         hourDigitOnes: 0,
@@ -144,8 +147,17 @@ function startTimer(ms) {
   }, ms);
 }
 
-function stopTimer() {
+function pauseTimer() {
   clearInterval(interval);
+}
+
+function resetTimer() {
+  clearInterval(interval);
+  interval = undefined;
+  remainingMs = INITIAL_MS;
+  const timeDigits = createTimeDigits(remainingMs);
+  updateTimerDisplay(timeDigits);
+  enableTimerInputs();
 }
 
 startTimerButton.addEventListener("click", () => {
@@ -153,8 +165,12 @@ startTimerButton.addEventListener("click", () => {
   startTimer(50);
 });
 
-stopTimerButton.addEventListener("click", () => {
-  stopTimer();
+pauseTimerButton.addEventListener("click", () => {
+  pauseTimer();
+});
+
+resetTimerButton.addEventListener("click", () => {
+  resetTimer();
 });
 
 function getTargetId(sourceId) {
@@ -187,6 +203,7 @@ function onDigitInput(event) {
   if (interval) {
     // no-op
     // there's a timer running, so ignore digit changes
+    console.log("Timer is running, ignoring input");
     return;
   }
 
@@ -215,3 +232,26 @@ document
       this.select();
     });
   });
+
+// TODO: When the inputs are disabled,
+// make the input text non selectable,
+// and make the cursor not appear when clicking on the inputs.
+function disableTimerInputs() {
+  const digitInputs = [
+    ...document.querySelectorAll('#timer-display input[type="number"]'),
+  ];
+  for (const input of digitInputs) {
+    input.setAttribute("disabled", "true");
+  }
+}
+
+function enableTimerInputs() {
+  const digitInputs = [
+    ...document.querySelectorAll('#timer-display input[type="number"]'),
+  ];
+  for (const input of digitInputs) {
+    input.removeAttribute("disabled");
+  }
+}
+
+// TODO: Buttons should be disabled in certain states.
