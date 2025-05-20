@@ -42,6 +42,7 @@ const digitKeyToIdMap = new Map([
 function createTimeDigits(millis) {
   let remaining = millis;
 
+  // TODO: There's a bug in the hours and minutes digits
   let hourDigitTens = 0;
   if (remaining >= TEN_HOURS_IN_MILLISECONDS) {
     hourDigitTens = Math.floor(remaining / TEN_HOURS_IN_MILLISECONDS);
