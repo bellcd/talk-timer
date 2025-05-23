@@ -1,0 +1,8 @@
+- supports starting a timer.
+- supports pausing a timer.
+- supports restarting a paused timer.
+- supports resetting a timer.
+- ignores any input to timer digits except the numbers 0 through 9.
+- moves focus to the next digit input when the numbers 0 through 9 are pressed.
+- supports tabbing and shift-tabbing through the digit inputs.
+- does not allow starting another timer when a timer is already running.
