@@ -25,12 +25,9 @@ function checkExhaustivelyHandled(input: never) {
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-  const timerDisplay = document.querySelector("#timer-display");
   const startTimerButton = document.querySelector("#start-timer");
   const pauseTimerButton = document.querySelector("#pause-timer");
   const resetTimerButton = document.querySelector("#reset-timer");
-  const timerInputInMinutes = document.querySelector("#timer-input-in-minutes");
-  const drawer = document.querySelector("#drawer");
 
   const INITIAL_MS = 0;
   const TEN_HOURS_IN_MILLISECONDS = 1000 * 60 * 60 * 10;
@@ -287,7 +284,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
     const sourceId = inputElement.id;
     const targetId = getTargetId(checkIsInputDigitId(sourceId));
-    const target = checkIsInputElement(document.querySelector(`#${targetId}`));
+    const target = checkIsElement(document.querySelector(`#${targetId}`));
     target.focus();
   }
 
