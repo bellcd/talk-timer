@@ -5,9 +5,12 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "watch": "tsc --watch"
+    "watch": "tsc --watch",
+    "test": "playwright test"
   },
   "devDependencies": {
-    "typescript": "^5.0.0"
+    "@playwright/test": "1.52.0",
+    "@types/node": "22.15.21",
+    "typescript": "5.8.3"
   }
 }

@@ -138,7 +138,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
     function startTimer(ms) {
         disableTimerInputs();
-        interval = setInterval(() => {
+        interval = window.setInterval(() => {
             remainingMs -= ms;
             if (remainingMs <= 0) {
                 clearInterval(interval);
