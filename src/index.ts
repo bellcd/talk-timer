@@ -1,20 +1,20 @@
 function checkIsElement(input: unknown) {
   if (input instanceof HTMLElement) {
+    return input;
+  } else {
     throw new Error(
       `Expected typeof input=${typeof input} to be an HTMLElement.`
     );
-  } else {
-    return input as HTMLElement;
   }
 }
 
 function checkIsInputElement(input: unknown) {
   if (input instanceof HTMLInputElement) {
+    return input;
+  } else {
     throw new Error(
       `Expected typeof input=${typeof input} to be an HTMLInputElement.`
     );
-  } else {
-    return input as HTMLInputElement;
   }
 }
 

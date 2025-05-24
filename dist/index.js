@@ -1,18 +1,18 @@
 "use strict";
 function checkIsElement(input) {
     if (input instanceof HTMLElement) {
-        throw new Error(`Expected typeof input=${typeof input} to be an HTMLElement.`);
+        return input;
     }
     else {
-        return input;
+        throw new Error(`Expected typeof input=${typeof input} to be an HTMLElement.`);
     }
 }
 function checkIsInputElement(input) {
     if (input instanceof HTMLInputElement) {
-        throw new Error(`Expected typeof input=${typeof input} to be an HTMLInputElement.`);
+        return input;
     }
     else {
-        return input;
+        throw new Error(`Expected typeof input=${typeof input} to be an HTMLInputElement.`);
     }
 }
 function checkExhaustivelyHandled(input) {
