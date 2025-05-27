@@ -186,7 +186,7 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   function startTimer(ms: number) {
-    disableTimerInputs();
+    // disableTimerInputs();
 
     interval = window.setInterval(() => {
       remainingMs -= ms;
@@ -229,6 +229,7 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   checkIsElement(startTimerButton).addEventListener("click", () => {
+    console.log("here");
     // TODO: Randomize?
     startTimer(50);
   });
@@ -325,3 +326,5 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   }
 });
+
+console.log("Did this run?");
