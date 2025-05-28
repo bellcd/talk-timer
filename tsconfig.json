@@ -1,13 +1,14 @@
 {
   "compilerOptions": {
     "target": "ES6",
-    "module": "ESNext",
+    "module": "NodeNext",
     "lib": ["ES6", "ESNext", "DOM", "DOM.Iterable"],
     "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "moduleResolution": "nodenext"
   },
   "include": ["src/*.ts"]
 }

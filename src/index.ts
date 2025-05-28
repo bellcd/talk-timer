@@ -325,6 +325,18 @@ window.addEventListener("DOMContentLoaded", () => {
       input.removeAttribute("disabled");
     }
   }
-});
 
-console.log("Did this run?");
+  function disableControlButtons() {
+    checkIsElement(startTimerButton).setAttribute("disabled", "true");
+    checkIsElement(pauseTimerButton).setAttribute("disabled", "true");
+    checkIsElement(resetTimerButton).setAttribute("disabled", "true");
+  }
+
+  disableControlButtons();
+
+  function enableControlButtons() {
+    checkIsElement(startTimerButton).removeAttribute("disabled");
+    checkIsElement(pauseTimerButton).removeAttribute("disabled");
+    checkIsElement(resetTimerButton).removeAttribute("disabled");
+  }
+});
