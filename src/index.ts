@@ -1,28 +1,10 @@
-function checkIsElement(input: unknown) {
-  if (input instanceof HTMLElement) {
-    return input;
-  } else {
-    throw new Error(
-      `Expected typeof input=${typeof input} to be an HTMLElement.`
-    );
-  }
-}
-
-function checkIsInputElement(input: unknown) {
-  if (input instanceof HTMLInputElement) {
-    return input;
-  } else {
-    throw new Error(
-      `Expected typeof input=${typeof input} to be an HTMLInputElement.`
-    );
-  }
-}
-
-function checkExhaustivelyHandled(input: never) {
-  throw new Error(
-    `checkExhaustivelyHandled called with typeof input=${typeof input}. There's a type issue somewhere.`
-  );
-}
+import { start } from "repl";
+import {
+  checkExhaustivelyHandled,
+  checkIsElement,
+  checkIsInputElement,
+} from "./assertions";
+import { getDigitInputElements } from "./digitInputs";
 
 window.addEventListener("DOMContentLoaded", () => {
   const startTimerButton = document.querySelector("#start-timer");
@@ -106,7 +88,7 @@ window.addEventListener("DOMContentLoaded", () => {
     ["millisecondDigitOnes", "millisecond-digit-ones"],
   ]);
 
-  function createTimeDigits(millis: number) {
+  function createTimeDigits(millis: number): TimeDigits {
     let remaining = millis;
 
     // TODO: There's a bug in the hours and minutes digits
@@ -268,6 +250,7 @@ window.addEventListener("DOMContentLoaded", () => {
   }
   // TODO: Why do the 'e' and '.' characters appear?
   // TODO: Pressing any key outside of 0123456789 should have no effect.
+  // TODO: Ignore delete and backspace keys.
   function onDigitInput(event: Event) {
     // TODO: Early return if there are errors in any of the inputs
     if (interval) {
@@ -278,8 +261,15 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     const inputElement = checkIsInputElement(event.target);
-    const digit = Number(inputElement.value);
 
+    if ("1234567890".includes(inputElement.value) === false) {
+      // input was not a digit, ignore
+      return;
+    }
+
+    // BUG: If the digit was non-zero, we need to remove the amount of time that digit contributed
+    // 6before adding the new digit's time
+    const digit = Number(inputElement.value);
     const multiplier = Number(inputElement.dataset.multiplier);
     remainingMs += digit * multiplier;
 
@@ -287,13 +277,13 @@ window.addEventListener("DOMContentLoaded", () => {
     const targetId = getTargetId(checkIsInputDigitId(sourceId));
     const target = checkIsElement(document.querySelector(`#${targetId}`));
     target.focus();
+    checkIsElement(startTimerButton).removeAttribute("disabled");
+    if (getDigitInputElements().every((d) => d.value === "0")) {
+      disableControlButtons();
+    }
   }
 
-  const elements = document.querySelectorAll(
-    `#timer-display > input[id*="digit"]`
-  );
-  const digits = [...elements].map((element) => checkIsInputElement(element));
-  for (const d of digits) {
+  for (const d of getDigitInputElements()) {
     d.addEventListener("input", onDigitInput);
   }
 
