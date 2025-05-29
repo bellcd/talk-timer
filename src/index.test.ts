@@ -1,7 +1,7 @@
 import { test, expect, Page } from "@playwright/test";
 
 test.beforeEach(async ({ page }) => {
-  await page.clock.install({ time: "2023-10-01T00:00:00.000Z" });
+  await page.clock.install({ time: new Date("2023-10-01T00:00:00.000Z") });
   await page.goto("http://localhost:5173");
 });
 
@@ -57,7 +57,7 @@ test("supports starting a timer", async ({ page }) => {
   const startButton = page.locator("#start-timer");
   await page.locator("#second-digit-ones").fill("2");
   await startButton.click();
-  await page.clock.fastForward(2000);
+  await page.clock.runFor(2000);
   const displayedDuration = await getDisplayedDuration(page);
   expect(displayedDuration).toBe("00:00:00:000");
 });
