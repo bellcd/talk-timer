@@ -1,4 +1,4 @@
-import { checkIsInputElement } from "./assertions";
+import { checkExhaustivelyHandled, checkIsInputElement } from "./assertions";
 
 export function getDigitInputElements() {
   const elements = document.querySelectorAll(
@@ -8,4 +8,59 @@ export function getDigitInputElements() {
     checkIsInputElement(element)
   );
   return inputElements;
+}
+
+type InputDigitId =
+  | "hour-digit-tens"
+  | "hour-digit-ones"
+  | "minute-digit-tens"
+  | "minute-digit-ones"
+  | "second-digit-tens"
+  | "second-digit-ones"
+  | "millisecond-digit-hundreds"
+  | "millisecond-digit-tens"
+  | "millisecond-digit-ones";
+
+export function checkIsInputDigitId(input: unknown): InputDigitId {
+  switch (input) {
+    case "hour-digit-tens":
+    case "hour-digit-ones":
+    case "minute-digit-tens":
+    case "minute-digit-ones":
+    case "second-digit-tens":
+    case "second-digit-ones":
+    case "millisecond-digit-hundreds":
+    case "millisecond-digit-tens":
+    case "millisecond-digit-ones":
+      return input;
+    default:
+      throw new Error(
+        `Expected input to be a valid InputDigitId, but got ${input}`
+      );
+  }
+}
+
+export function getTargetId(sourceId: InputDigitId) {
+  switch (sourceId) {
+    case "hour-digit-tens":
+      return "hour-digit-ones";
+    case "hour-digit-ones":
+      return "minute-digit-tens";
+    case "minute-digit-tens":
+      return "minute-digit-ones";
+    case "minute-digit-ones":
+      return "second-digit-tens";
+    case "second-digit-tens":
+      return "second-digit-ones";
+    case "second-digit-ones":
+      return "millisecond-digit-hundreds";
+    case "millisecond-digit-hundreds":
+      return "millisecond-digit-tens";
+    case "millisecond-digit-tens":
+      return "millisecond-digit-ones";
+    case "millisecond-digit-ones":
+      return "start-timer";
+    default:
+      checkExhaustivelyHandled(sourceId);
+  }
 }
