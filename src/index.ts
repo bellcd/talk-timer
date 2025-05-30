@@ -1,4 +1,3 @@
-import { start } from "repl";
 import {
   checkExhaustivelyHandled,
   checkIsElement,
@@ -18,6 +17,8 @@ window.addEventListener("DOMContentLoaded", () => {
   const ONE_MINUTE_IN_MILLISECONDS = 1000 * 60;
   const TEN_SECONDS_IN_MILLISECONDS = 1000 * 10;
   const ONE_SECOND_IN_MILLISECONDS = 1000;
+
+  // TODO: Bundle state? timer running vs not-running, remaining time vs no-time
 
   let remainingMs = INITIAL_MS;
   let interval: undefined | number = undefined;
@@ -168,6 +169,9 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   function startTimer(ms: number) {
+    checkIsElement(startTimerButton).setAttribute("disabled", "true");
+    checkIsElement(pauseTimerButton).removeAttribute("disabled");
+    checkIsElement(resetTimerButton).removeAttribute("disabled");
     // disableTimerInputs();
 
     interval = window.setInterval(() => {
@@ -199,6 +203,8 @@ window.addEventListener("DOMContentLoaded", () => {
 
   function pauseTimer() {
     clearInterval(interval);
+    checkIsElement(startTimerButton).removeAttribute("disabled");
+    checkIsElement(pauseTimerButton).setAttribute("disabled", "true");
   }
 
   function resetTimer() {
