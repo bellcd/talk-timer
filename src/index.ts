@@ -6,9 +6,41 @@ import {
 import { getDigitInputElements } from "./digitInputs";
 
 window.addEventListener("DOMContentLoaded", () => {
-  const startTimerButton = document.querySelector("#start-timer");
-  const pauseTimerButton = document.querySelector("#pause-timer");
-  const resetTimerButton = document.querySelector("#reset-timer");
+  function getStartTimerButton() {
+    return checkIsElement(document.querySelector("#start-timer"));
+  }
+  function enableStartTimerButton() {
+    getStartTimerButton().removeAttribute("disabled");
+  }
+  function disableStartTimerButton() {
+    getStartTimerButton().setAttribute("disabled", "true");
+  }
+
+  function getPauseTimerButton() {
+    return checkIsElement(document.querySelector("#pause-timer"));
+  }
+  function enablePauseTimerButton() {
+    getPauseTimerButton().removeAttribute("disabled");
+  }
+  function disablePauseTimerButton() {
+    getPauseTimerButton().setAttribute("disabled", "true");
+  }
+
+  function getResetTimerButton() {
+    return checkIsElement(document.querySelector("#reset-timer"));
+  }
+  function enableResetTimerButton() {
+    getResetTimerButton().removeAttribute("disabled");
+  }
+  function disableResetTimerButton() {
+    getResetTimerButton().setAttribute("disabled", "true");
+  }
+
+  function disableControlButtons() {
+    disableStartTimerButton();
+    disablePauseTimerButton();
+    disableResetTimerButton();
+  }
 
   const INITIAL_MS = 0;
   const TEN_HOURS_IN_MILLISECONDS = 1000 * 60 * 60 * 10;
@@ -18,7 +50,27 @@ window.addEventListener("DOMContentLoaded", () => {
   const TEN_SECONDS_IN_MILLISECONDS = 1000 * 10;
   const ONE_SECOND_IN_MILLISECONDS = 1000;
 
-  // TODO: Bundle state? timer running vs not-running, remaining time vs no-time
+  // // TODO: Bundle state? timer running vs not-running, remaining time vs no-time
+  // // running, hasTime
+  // // not running, hasTime
+  // // not running, no time
+
+  // type TimerState =
+  //   | {
+  //       type: "running";
+  //       remainingMs: number;
+  //     }
+  //   | {
+  //       type: "not_running_with_time_remaining";
+  //       remainingMs: number;
+  //     }
+  //   | {
+  //       type: "not_running_no_time_remaining";
+  //     };
+
+  // let timerState: TimerState = {
+  //   type: "not_running_no_time_remaining",
+  // };
 
   let remainingMs = INITIAL_MS;
   let interval: undefined | number = undefined;
@@ -169,9 +221,9 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   function startTimer(ms: number) {
-    checkIsElement(startTimerButton).setAttribute("disabled", "true");
-    checkIsElement(pauseTimerButton).removeAttribute("disabled");
-    checkIsElement(resetTimerButton).removeAttribute("disabled");
+    disableStartTimerButton();
+    enablePauseTimerButton();
+    enableResetTimerButton();
     // disableTimerInputs();
 
     interval = window.setInterval(() => {
@@ -203,8 +255,8 @@ window.addEventListener("DOMContentLoaded", () => {
 
   function pauseTimer() {
     clearInterval(interval);
-    checkIsElement(startTimerButton).removeAttribute("disabled");
-    checkIsElement(pauseTimerButton).setAttribute("disabled", "true");
+    enableStartTimerButton();
+    disablePauseTimerButton();
   }
 
   function resetTimer() {
@@ -216,17 +268,17 @@ window.addEventListener("DOMContentLoaded", () => {
     enableTimerInputs();
   }
 
-  checkIsElement(startTimerButton).addEventListener("click", () => {
+  getStartTimerButton().addEventListener("click", () => {
     console.log("here");
     // TODO: Randomize?
     startTimer(50);
   });
 
-  checkIsElement(pauseTimerButton).addEventListener("click", () => {
+  getPauseTimerButton().addEventListener("click", () => {
     pauseTimer();
   });
 
-  checkIsElement(resetTimerButton).addEventListener("click", () => {
+  getResetTimerButton().addEventListener("click", () => {
     resetTimer();
   });
 
@@ -283,7 +335,7 @@ window.addEventListener("DOMContentLoaded", () => {
     const targetId = getTargetId(checkIsInputDigitId(sourceId));
     const target = checkIsElement(document.querySelector(`#${targetId}`));
     target.focus();
-    checkIsElement(startTimerButton).removeAttribute("disabled");
+    enableStartTimerButton();
     if (getDigitInputElements().every((d) => d.value === "0")) {
       disableControlButtons();
     }
@@ -322,17 +374,5 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function disableControlButtons() {
-    checkIsElement(startTimerButton).setAttribute("disabled", "true");
-    checkIsElement(pauseTimerButton).setAttribute("disabled", "true");
-    checkIsElement(resetTimerButton).setAttribute("disabled", "true");
-  }
-
   disableControlButtons();
-
-  function enableControlButtons() {
-    checkIsElement(startTimerButton).removeAttribute("disabled");
-    checkIsElement(pauseTimerButton).removeAttribute("disabled");
-    checkIsElement(resetTimerButton).removeAttribute("disabled");
-  }
 });
