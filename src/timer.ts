@@ -111,9 +111,11 @@ const digitKeyToIdMap = new Map([
 export class Timer {
   constructor() {
     this.getStartTimerButton().addEventListener("click", () => {
-      console.log("here");
-      // TODO: Randomize?
-      this.startTimer(50);
+      const timeout = Math.floor(
+        Math.random() * (this.MAX_TIMEOUT_MS - this.MIN_TIMEOUT_MS + 1) +
+          this.MIN_TIMEOUT_MS
+      );
+      this.startTimer(timeout);
     });
 
     this.getPauseTimerButton().addEventListener("click", () => {
@@ -140,6 +142,8 @@ export class Timer {
     this.disableControlButtons();
   }
 
+  private readonly MAX_TIMEOUT_MS = 50;
+  private readonly MIN_TIMEOUT_MS = 10;
   private remainingMs: number = INITIAL_MS;
   private interval: undefined | number = undefined;
 
@@ -237,6 +241,7 @@ export class Timer {
   }
 
   updateTimerDisplay(timeDigits: TimeDigits) {
+    console.debug("Updating timer display", getDisplayedDuration(timeDigits));
     for (const [key, value] of Object.entries(timeDigits)) {
       const id = digitKeyToIdMap.get(key);
       // TODO: Does it matter that this causes multiple reflows?
@@ -280,4 +285,20 @@ export class Timer {
       this.disableControlButtons();
     }
   };
+}
+
+function getDisplayedDuration(timeDigits: TimeDigits) {
+  const {
+    hourDigitTens,
+    hourDigitOnes,
+    minuteDigitTens,
+    minuteDigitOnes,
+    secondDigitTens,
+    secondDigitOnes,
+    millisecondDigitHundreds,
+    millisecondDigitTens,
+    millisecondDigitOnes,
+  } = timeDigits;
+
+  return `${hourDigitTens}${hourDigitOnes}:${minuteDigitTens}${minuteDigitOnes}:${secondDigitTens}${secondDigitOnes}:${millisecondDigitHundreds}${millisecondDigitTens}${millisecondDigitOnes}`;
 }
