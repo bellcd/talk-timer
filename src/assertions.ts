@@ -18,7 +18,7 @@ export function checkIsInputElement(input: unknown) {
   }
 }
 
-export function checkExhaustivelyHandled(input: never) {
+export function checkExhaustivelyHandled(input: never): never {
   throw new Error(
     `checkExhaustivelyHandled called with typeof input=${typeof input}. There's a type issue somewhere.`
   );

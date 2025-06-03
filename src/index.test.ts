@@ -87,6 +87,7 @@ test("supports restarting a paused timer", async ({ page }) => {
   const pauseButton = page.locator("#pause-timer");
   await page.locator("#second-digit-ones").fill("2");
   await startButton.click();
+  page.waitForTimeout(300); // Mimic human interaction time. Otherwise the click(s) below can fail. TODO: Maybe a helper asserting that each button is enabled/disabled would be better?
   await pauseButton.click();
   await startButton.click();
   await page.clock.runFor(2000);

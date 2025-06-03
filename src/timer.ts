@@ -1,4 +1,8 @@
-import { checkIsElement, checkIsInputElement } from "./assertions";
+import {
+  checkExhaustivelyHandled,
+  checkIsElement,
+  checkIsInputElement,
+} from "./assertions";
 import {
   checkIsInputDigitId,
   getDigitInputElements,
@@ -108,6 +112,34 @@ const digitKeyToIdMap = new Map([
   ["millisecondDigitOnes", "millisecond-digit-ones"],
 ]);
 
+type TimerState =
+  | {
+      type: "running";
+      remainingMs: number;
+    }
+  | {
+      type: "not_running_with_time_remaining";
+      remainingMs: number;
+    }
+  | {
+      type: "not_running_no_time_remaining";
+    };
+
+function getRemainingMs(timerState: TimerState, ms: number): number {
+  switch (timerState.type) {
+    case "running":
+    case "not_running_with_time_remaining":
+      return timerState.remainingMs - ms;
+    case "not_running_no_time_remaining":
+      // TODO: Narrower state to avoid this case?
+      throw new Error(
+        "We should not be getting the remaining milliseconds when there's no time remaining"
+      );
+    default:
+      return checkExhaustivelyHandled(timerState);
+  }
+}
+
 export class Timer {
   constructor() {
     this.getStartTimerButton().addEventListener("click", () => {
@@ -140,12 +172,15 @@ export class Timer {
       });
 
     this.disableControlButtons();
+    this.timerState = {
+      type: "not_running_no_time_remaining",
+    };
   }
 
   private readonly MAX_TIMEOUT_MS = 50;
   private readonly MIN_TIMEOUT_MS = 10;
-  private remainingMs: number = INITIAL_MS;
   private interval: undefined | number = undefined;
+  private timerState: TimerState;
 
   getStartTimerButton() {
     return checkIsElement(document.querySelector("#start-timer"));
@@ -190,9 +225,12 @@ export class Timer {
     // disableTimerInputs();
 
     this.interval = window.setInterval(() => {
-      this.remainingMs -= ms;
+      const remainingMs = getRemainingMs(this.timerState, ms);
 
-      if (this.remainingMs <= 0) {
+      if (remainingMs <= 0) {
+        this.timerState = {
+          type: "not_running_no_time_remaining",
+        };
         clearInterval(this.interval);
         this.interval = undefined;
         const timeDigits = {
@@ -210,25 +248,56 @@ export class Timer {
         this.updateTimerDisplay(timeDigits);
         console.log("Time's up!");
       } else {
-        const timeDigits = createTimeDigits(this.remainingMs);
+        this.timerState = {
+          type: "running",
+          remainingMs,
+        };
+        const timeDigits = createTimeDigits(remainingMs);
         this.updateTimerDisplay(timeDigits);
       }
     }, ms);
   }
 
   pauseTimer() {
-    clearInterval(this.interval);
-    this.enableStartTimerButton();
-    this.disablePauseTimerButton();
+    switch (this.timerState.type) {
+      case "running":
+        this.timerState = {
+          type: "not_running_with_time_remaining",
+          remainingMs: this.timerState.remainingMs,
+        };
+        clearInterval(this.interval);
+        this.enableStartTimerButton();
+        this.disablePauseTimerButton();
+        break;
+      case "not_running_with_time_remaining":
+      case "not_running_no_time_remaining":
+        // TODO: Is this enforceable at compile time?
+        throw new Error("Cannot pause timer in state: " + this.timerState.type);
+      default:
+        checkExhaustivelyHandled(this.timerState);
+    }
   }
 
   resetTimer() {
-    clearInterval(this.interval);
-    this.interval = undefined;
-    this.remainingMs = INITIAL_MS;
-    const timeDigits = createTimeDigits(this.remainingMs);
-    this.updateTimerDisplay(timeDigits);
-    this.enableTimerInputs();
+    switch (this.timerState.type) {
+      case "running":
+      case "not_running_with_time_remaining":
+        clearInterval(this.interval);
+        this.interval = undefined;
+        this.timerState = {
+          type: "not_running_no_time_remaining",
+        };
+        const timeDigits = createTimeDigits(0);
+        this.updateTimerDisplay(timeDigits);
+        this.enableTimerInputs();
+        break;
+      case "not_running_no_time_remaining":
+        // TODO: Is this enforceable at compile time?
+        throw new Error("Cannot reset timer in state: " + this.timerState.type);
+      default:
+        checkExhaustivelyHandled(this.timerState);
+        break;
+    }
   }
 
   enableTimerInputs() {
@@ -256,13 +325,6 @@ export class Timer {
   // TODO: Is this the right place for this method?
   onDigitInput = (event: Event) => {
     // TODO: Early return if there are errors in any of the inputs
-    if (this.interval) {
-      // no-op
-      // there's a timer running, so ignore digit changes
-      console.log("Timer is running, ignoring input");
-      return;
-    }
-
     const inputElement = checkIsInputElement(event.target);
 
     if ("1234567890".includes(inputElement.value) === false) {
@@ -270,11 +332,29 @@ export class Timer {
       return;
     }
 
-    // BUG: If the digit was non-zero, we need to remove the amount of time that digit contributed
-    // 6before adding the new digit's time
     const digit = Number(inputElement.value);
     const multiplier = Number(inputElement.dataset.multiplier);
-    this.remainingMs += digit * multiplier;
+
+    switch (this.timerState.type) {
+      case "running":
+        return;
+      case "not_running_with_time_remaining":
+        this.timerState = {
+          type: "not_running_with_time_remaining",
+          // BUG: If the digit was non-zero, we need to remove the amount of time that digit contributed
+          // before adding the new digit's time
+          remainingMs: this.timerState.remainingMs + digit * multiplier,
+        };
+        break;
+      case "not_running_no_time_remaining":
+        this.timerState = {
+          type: "not_running_with_time_remaining",
+          remainingMs: digit * multiplier,
+        };
+        break;
+      default:
+        checkExhaustivelyHandled(this.timerState);
+    }
 
     const sourceId = inputElement.id;
     const targetId = getTargetId(checkIsInputDigitId(sourceId));
