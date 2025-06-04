@@ -10,6 +10,16 @@ export function getDigitInputElements() {
   return inputElements;
 }
 
+export function getRemainingMsFromInputs(): number {
+  let sum = 0;
+  for (const inputElement of getDigitInputElements()) {
+    const digit = Number(inputElement.value);
+    const multiplier = Number(inputElement.dataset.multiplier);
+    sum = sum + digit * multiplier;
+  }
+  return sum;
+}
+
 type InputDigitId =
   | "hour-digit-tens"
   | "hour-digit-ones"

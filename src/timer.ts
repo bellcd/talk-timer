@@ -6,6 +6,7 @@ import {
 import {
   checkIsInputDigitId,
   getDigitInputElements,
+  getRemainingMsFromInputs,
   getTargetId,
 } from "./digitInputs";
 
@@ -15,8 +16,6 @@ const TEN_MINUTES_IN_MILLISECONDS = 1000 * 60 * 10;
 const ONE_MINUTE_IN_MILLISECONDS = 1000 * 60;
 const TEN_SECONDS_IN_MILLISECONDS = 1000 * 10;
 const ONE_SECOND_IN_MILLISECONDS = 1000;
-
-const INITIAL_MS = 0;
 
 type TimeDigits = {
   hourDigitTens: number;
@@ -332,24 +331,14 @@ export class Timer {
       return;
     }
 
-    const digit = Number(inputElement.value);
-    const multiplier = Number(inputElement.dataset.multiplier);
-
     switch (this.timerState.type) {
       case "running":
         return;
       case "not_running_with_time_remaining":
-        this.timerState = {
-          type: "not_running_with_time_remaining",
-          // BUG: If the digit was non-zero, we need to remove the amount of time that digit contributed
-          // before adding the new digit's time
-          remainingMs: this.timerState.remainingMs + digit * multiplier,
-        };
-        break;
       case "not_running_no_time_remaining":
         this.timerState = {
           type: "not_running_with_time_remaining",
-          remainingMs: digit * multiplier,
+          remainingMs: getRemainingMsFromInputs(),
         };
         break;
       default:

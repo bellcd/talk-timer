@@ -70,6 +70,7 @@ test("disables the start button when a timer is running", async ({ page }) => {
   await expect(startButton).toBeDisabled();
 });
 
+// FIXME: Flaky test.
 test("supports pausing a timer", async ({ page }) => {
   const startButton = page.locator("#start-timer");
   const pauseButton = page.locator("#pause-timer");
@@ -93,4 +94,17 @@ test("supports restarting a paused timer", async ({ page }) => {
   await page.clock.runFor(2000);
   const displayedDuration = await getDisplayedDuration(page);
   expect(displayedDuration).toBe("00:00:00:000");
+});
+
+test("supports changing digits", async ({ page }) => {
+  const startButton = page.locator("#start-timer");
+  await page.locator("#second-digit-ones").fill("5");
+  await page.locator("#second-digit-ones").fill("6");
+  await startButton.click();
+  await page.clock.runFor(100);
+  const displayedDuration = await getDisplayedDuration(page);
+  // Allow for millisecond imprecision in JS timers.
+  // The seconds digit has to be 5, not e.g. 4 or 1 from 5+6=11
+  const regex = /^00:00:05:\d{3}$/;
+  expect(displayedDuration).toMatch(regex);
 });
