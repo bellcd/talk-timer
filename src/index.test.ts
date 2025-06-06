@@ -83,6 +83,7 @@ test("supports pausing a timer", async ({ page }) => {
   expect(beforeDisplayedDuration).toBe(afterDisplayedDuration);
 });
 
+// FIXME: Flaky test.
 test("supports restarting a paused timer", async ({ page }) => {
   const startButton = page.locator("#start-timer");
   const pauseButton = page.locator("#pause-timer");
@@ -123,4 +124,33 @@ test("disables the start, pause, and reset buttons when the timer ends", async (
   await expect(startButton).toBeDisabled();
   await expect(pauseButton).toBeDisabled();
   await expect(resetButton).toBeDisabled();
+});
+
+test("supports tabbing and shift-tabbing through the digit inputs", async ({
+  page,
+}) => {
+  const digitSelectors = [
+    "#hour-digit-tens",
+    "#hour-digit-ones",
+    "#minute-digit-tens",
+    "#minute-digit-ones",
+    "#second-digit-tens",
+    "#second-digit-ones",
+    "#millisecond-digit-hundreds",
+    "#millisecond-digit-tens",
+    "#millisecond-digit-ones",
+  ];
+
+  await page.locator(digitSelectors[0]).focus();
+  for (let i = 1; i < digitSelectors.length; i++) {
+    await page.keyboard.press("Tab");
+    await expect(page.locator(digitSelectors[i])).toBeFocused();
+  }
+
+  for (let i = digitSelectors.length - 2; i >= 0; i--) {
+    await page.keyboard.down("Shift");
+    await page.keyboard.press("Tab");
+    await page.keyboard.up("Shift");
+    await expect(page.locator(digitSelectors[i])).toBeFocused();
+  }
 });
