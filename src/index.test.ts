@@ -259,3 +259,15 @@ test("ignores letters, symbols, spacebar, enter, backspace, and delete keypress 
   await page.keyboard.press("Delete");
   await expect(input).toHaveValue("5");
 });
+
+test("enables the reset button when changing digit inputs on a non-running timer", async ({
+  page,
+}) => {
+  const resetButton = page.locator("#reset-timer");
+
+  await expect(resetButton).toBeDisabled();
+  await page.locator("#minute-digit-ones").fill("3");
+  await expect(resetButton).toBeEnabled();
+});
+
+// Prevents changing digit inputs on a running timer

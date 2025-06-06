@@ -355,6 +355,7 @@ export class Timer {
     const target = checkIsElement(document.querySelector(`#${targetId}`));
     target.focus();
     this.enableStartTimerButton();
+    this.enableResetTimerButton();
     if (getDigitInputElements().every((d) => d.value === "0")) {
       this.disableControlButtons();
     }
