@@ -245,6 +245,7 @@ export class Timer {
         };
 
         this.updateTimerDisplay(timeDigits);
+        this.disableControlButtons();
         console.log("Time's up!");
       } else {
         this.timerState = {

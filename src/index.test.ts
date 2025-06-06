@@ -108,3 +108,19 @@ test("supports changing digits", async ({ page }) => {
   const regex = /^00:00:05:\d{3}$/;
   expect(displayedDuration).toMatch(regex);
 });
+
+test("disables the start, pause, and reset buttons when the timer ends", async ({
+  page,
+}) => {
+  await page.locator("#second-digit-ones").fill("2");
+  const startButton = page.locator("#start-timer");
+  const pauseButton = page.locator("#pause-timer");
+  const resetButton = page.locator("#reset-timer");
+
+  await startButton.click();
+  await page.clock.runFor(2000);
+
+  await expect(startButton).toBeDisabled();
+  await expect(pauseButton).toBeDisabled();
+  await expect(resetButton).toBeDisabled();
+});
