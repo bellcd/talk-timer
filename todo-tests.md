@@ -1,4 +1,3 @@
 - supports resetting a timer (running, paused, not-running).
 - supports changing digits.
 - ignores any input to timer digits except the numbers 0 through 9.
-- moves focus to the next digit input when the numbers 0 through 9 are pressed.

@@ -154,3 +154,29 @@ test("supports tabbing and shift-tabbing through the digit inputs", async ({
     await expect(page.locator(digitSelectors[i])).toBeFocused();
   }
 });
+
+test("moves focus to the next digit input when the numbers 0 through 9 are pressed", async ({
+  page,
+}) => {
+  const digitSelectors = [
+    "#hour-digit-tens",
+    "#hour-digit-ones",
+    "#minute-digit-tens",
+    "#minute-digit-ones",
+    "#second-digit-tens",
+    "#second-digit-ones",
+    "#millisecond-digit-hundreds",
+    "#millisecond-digit-tens",
+    "#millisecond-digit-ones",
+  ];
+
+  function getRandomDigit() {
+    return Math.floor(Math.random() * 10).toString();
+  }
+
+  for (let i = 0; i < digitSelectors.length - 1; i++) {
+    await page.locator(digitSelectors[i]).focus();
+    await page.keyboard.type(getRandomDigit());
+    await expect(page.locator(digitSelectors[i + 1])).toBeFocused();
+  }
+});
