@@ -1,3 +1,0 @@
-- supports resetting a timer (running, paused, not-running).
-- supports changing digits.
-- ignores any input to timer digits except the numbers 0 through 9.

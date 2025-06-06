@@ -158,6 +158,7 @@ export class Timer {
     });
 
     for (const d of getDigitInputElements()) {
+      d.addEventListener("keydown", this.allowOnlyDigits);
       d.addEventListener("input", this.onDigitInput);
     }
 
@@ -290,6 +291,7 @@ export class Timer {
         const timeDigits = createTimeDigits(0);
         this.updateTimerDisplay(timeDigits);
         this.enableTimerInputs();
+        this.disableControlButtons();
         break;
       case "not_running_no_time_remaining":
         // TODO: Is this enforceable at compile time?
@@ -319,18 +321,20 @@ export class Timer {
     }
   }
 
-  // TODO: Why do the 'e' and '.' characters appear?
-  // TODO: Pressing any key outside of 0123456789 should have no effect.
-  // TODO: Ignore delete and backspace keys.
+  // Add this method to your Timer class:
+  allowOnlyDigits = (event: KeyboardEvent) => {
+    if (
+      (event.key.length === 1 && !"0123456789".includes(event.key)) ||
+      [" ", "Enter", "Backspace", "Delete"].includes(event.key)
+    ) {
+      event.preventDefault();
+    }
+  };
+
   // TODO: Is this the right place for this method?
   onDigitInput = (event: Event) => {
     // TODO: Early return if there are errors in any of the inputs
     const inputElement = checkIsInputElement(event.target);
-
-    if ("1234567890".includes(inputElement.value) === false) {
-      // input was not a digit, ignore
-      return;
-    }
 
     switch (this.timerState.type) {
       case "running":
