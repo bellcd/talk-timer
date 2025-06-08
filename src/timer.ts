@@ -8,6 +8,7 @@ import {
   getDigitInputElements,
   getRemainingMsFromInputs,
   getTargetId,
+  setDigitInputsReadOnly,
 } from "./digitInputs";
 
 const TEN_HOURS_IN_MILLISECONDS = 1000 * 60 * 60 * 10;
@@ -219,6 +220,7 @@ export class Timer {
   }
 
   startTimer(ms: number) {
+    setDigitInputsReadOnly(true);
     this.disableStartTimerButton();
     this.enablePauseTimerButton();
     this.enableResetTimerButton();
@@ -262,6 +264,7 @@ export class Timer {
   pauseTimer() {
     switch (this.timerState.type) {
       case "running":
+        setDigitInputsReadOnly(false);
         this.timerState = {
           type: "not_running_with_time_remaining",
           remainingMs: this.timerState.remainingMs,
@@ -283,6 +286,7 @@ export class Timer {
     switch (this.timerState.type) {
       case "running":
       case "not_running_with_time_remaining":
+        setDigitInputsReadOnly(false);
         clearInterval(this.interval);
         this.interval = undefined;
         this.timerState = {

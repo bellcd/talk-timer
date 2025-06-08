@@ -10,6 +10,12 @@ export function getDigitInputElements() {
   return inputElements;
 }
 
+export function setDigitInputsReadOnly(readonly: boolean) {
+  getDigitInputElements().forEach((input) => {
+    input.readOnly = readonly;
+  });
+}
+
 export function getRemainingMsFromInputs(): number {
   let sum = 0;
   for (const inputElement of getDigitInputElements()) {

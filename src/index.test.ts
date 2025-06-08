@@ -270,4 +270,14 @@ test("enables the reset button when changing digit inputs on a non-running timer
   await expect(resetButton).toBeEnabled();
 });
 
-// Prevents changing digit inputs on a running timer
+test("prevents changing digit inputs on a running timer", async ({ page }) => {
+  const startButton = page.locator("#start-timer");
+  const digitInput = page.locator("#minute-digit-ones");
+
+  await digitInput.focus();
+  await page.keyboard.type("2");
+  await startButton.click();
+  await digitInput.focus();
+  await page.keyboard.type("7");
+  await expect(digitInput).toHaveValue("1"); // 1 not 2 because the digit changed from the timer starting.
+});
