@@ -17,7 +17,7 @@ async function getDisplayedDuration(page: Page) {
     .locator("#millisecond-digit-ones")
     .inputValue();
 
-  return `${hourDigitTens}${hourDigitOnes}:${minuteDigitTens}${minuteDigitOnes}:${secondDigitTens}${secondDigitOnes}:${millisecondDigitHundreds}${millisecondDigitTens}${millisecondDigitOnes}`;
+  return `${hourDigitTens}${hourDigitOnes}:${minuteDigitTens}${minuteDigitOnes}:${secondDigitTens}${secondDigitOnes}.${millisecondDigitHundreds}${millisecondDigitTens}${millisecondDigitOnes}`;
 }
 
 test.beforeEach(async ({ page }) => {
@@ -60,7 +60,7 @@ test.skip("supports starting a timer", async ({ page }) => {
   await startButton.click();
   await page.clock.runFor(2000);
   const displayedDuration = await getDisplayedDuration(page);
-  expect(displayedDuration).toBe("00:00:00:000");
+  expect(displayedDuration).toBe("00:00:00.000");
 });
 
 test("disables the start button when a timer is running", async ({ page }) => {
@@ -95,7 +95,7 @@ test.skip("supports restarting a paused timer", async ({ page }) => {
   await startButton.click();
   await page.clock.runFor(2000);
   const displayedDuration = await getDisplayedDuration(page);
-  expect(displayedDuration).toBe("00:00:00:000");
+  expect(displayedDuration).toBe("00:00:00.000");
 });
 
 test("supports changing digits", async ({ page }) => {
@@ -107,7 +107,7 @@ test("supports changing digits", async ({ page }) => {
   const displayedDuration = await getDisplayedDuration(page);
   // Allow for millisecond imprecision in JS timers.
   // The seconds digit has to be 5, not e.g. 4 or 1 from 5+6=11
-  const regex = /^00:00:05:\d{3}$/;
+  const regex = /^00:00:05.\d{3}$/;
   expect(displayedDuration).toMatch(regex);
 });
 
@@ -192,7 +192,7 @@ test("supports resetting a running timer", async ({ page }) => {
   await resetButton.click();
 
   const displayedDuration = await getDisplayedDuration(page);
-  expect(displayedDuration).toBe("00:00:00:000");
+  expect(displayedDuration).toBe("00:00:00.000");
 });
 
 test("resetting a timer disables the start, pause, and reset buttons", async ({
@@ -224,7 +224,7 @@ test("supports resetting a non-running timer", async ({ page }) => {
   await resetButton.click();
 
   const displayedDuration = await getDisplayedDuration(page);
-  expect(displayedDuration).toBe("00:00:00:000");
+  expect(displayedDuration).toBe("00:00:00.000");
 });
 
 test("ignores letters, symbols, spacebar, enter, backspace, and delete keypress input to timer digits", async ({
@@ -294,7 +294,7 @@ test("allows changing digit inputs when a timer reaches zero", async ({
   await page.clock.runFor(3000);
 
   const displayedDuration = await getDisplayedDuration(page);
-  expect(displayedDuration).toMatch("00:00:00:000");
+  expect(displayedDuration).toMatch("00:00:00.000");
 
   await digitInput.fill("7");
   await expect(digitInput).toHaveValue("7");

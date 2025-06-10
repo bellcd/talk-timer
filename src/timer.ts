@@ -303,7 +303,6 @@ export class Timer {
         throw new Error("Cannot reset timer in state: " + this.timerState.type);
       default:
         checkExhaustivelyHandled(this.timerState);
-        break;
     }
   }
 
@@ -380,5 +379,5 @@ function getDisplayedDuration(timeDigits: TimeDigits) {
     millisecondDigitOnes,
   } = timeDigits;
 
-  return `${hourDigitTens}${hourDigitOnes}:${minuteDigitTens}${minuteDigitOnes}:${secondDigitTens}${secondDigitOnes}:${millisecondDigitHundreds}${millisecondDigitTens}${millisecondDigitOnes}`;
+  return `${hourDigitTens}${hourDigitOnes}:${minuteDigitTens}${minuteDigitOnes}:${secondDigitTens}${secondDigitOnes}.${millisecondDigitHundreds}${millisecondDigitTens}${millisecondDigitOnes}`;
 }
