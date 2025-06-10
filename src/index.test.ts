@@ -281,3 +281,25 @@ test("prevents changing digit inputs on a running timer", async ({ page }) => {
   await page.keyboard.type("7");
   await expect(digitInput).toHaveValue("1"); // 1 not 2 because the digit changed from the timer starting.
 });
+
+test("allows changing digit inputs when a timer reaches zero", async ({
+  page,
+}) => {
+  const startButton = page.locator("#start-timer");
+  const digitInput = page.locator("#second-digit-ones");
+
+  await digitInput.fill("2");
+  await startButton.click();
+
+  await page.clock.runFor(3000);
+
+  const displayedDuration = await getDisplayedDuration(page);
+  expect(displayedDuration).toMatch("00:00:00:000");
+
+  await digitInput.fill("7");
+  await expect(digitInput).toHaveValue("7");
+
+  await digitInput.focus();
+  await page.keyboard.type("3");
+  await expect(digitInput).toHaveValue("3");
+});

@@ -249,6 +249,7 @@ export class Timer {
 
         this.updateTimerDisplay(timeDigits);
         this.disableControlButtons();
+        setDigitInputsReadOnly(false);
         console.log("Time's up!");
       } else {
         this.timerState = {
