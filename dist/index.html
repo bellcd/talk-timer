@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <title>Talk Timer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script type="module" crossorigin src="/assets/index-Vy510Lrl.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-CH8L-B0q.css">
+    <script type="module" crossorigin src="/assets/index-D8OX6P2O.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-8Qmbw9Rv.css">
   </head>
   <body>
     <div id="timer-display" class="mx-auto max-w-7xl sm:px-6 lg:px-8">
@@ -67,7 +67,7 @@
         value="0"
         maxlength="1"
       />
-      <span>:</span>
+      <span>.</span>
       <input
         id="millisecond-digit-hundreds"
         data-multiplier="100"
@@ -100,5 +100,11 @@
     <button id="start-timer" type="button">Start</button>
     <button id="pause-timer" type="button">Pause</button>
     <button id="reset-timer" type="button">Reset</button>
+
+    <div class="times-up-overlay hidden" aria-hidden="true">
+      <div class="times-up-overlay-message">TIME'S UP</div>
+      <button class="times-up-overlay-ok-button" type="button">OK</button>
+    </div>
+
   </body>
 </html>
