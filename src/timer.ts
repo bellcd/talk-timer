@@ -140,6 +140,30 @@ function getRemainingMs(timerState: TimerState, ms: number): number {
   }
 }
 
+function showTimesUpOverlay() {
+  const overlay = document.querySelector(".times-up-overlay");
+  if (overlay) {
+    overlay.classList.remove("hidden");
+    overlay.removeAttribute("aria-hidden");
+  } else {
+    throw new Error(
+      `Expected to find an overlay element but found overlay=${overlay}`
+    );
+  }
+}
+
+function hideTimesUpOverlay() {
+  const overlay = document.querySelector(".times-up-overlay");
+  if (overlay) {
+    overlay.classList.add("hidden");
+    overlay.setAttribute("aria-hidden", "true");
+  } else {
+    throw new Error(
+      `Expected to find an overlay element but found overlay=${overlay}`
+    );
+  }
+}
+
 export class Timer {
   constructor() {
     this.getStartTimerButton().addEventListener("click", () => {
@@ -173,6 +197,16 @@ export class Timer {
       });
 
     this.disableControlButtons();
+
+    const timesUpOk = document.querySelector(".times-up-overlay-ok-button");
+    if (timesUpOk) {
+      timesUpOk.addEventListener("click", hideTimesUpOverlay);
+    } else {
+      throw new Error(
+        `Expected to find a #times-up-ok element but found timesUpOk=${timesUpOk}. `
+      );
+    }
+
     this.timerState = {
       type: "not_running_no_time_remaining",
     };
@@ -250,7 +284,7 @@ export class Timer {
         this.updateTimerDisplay(timeDigits);
         this.disableControlButtons();
         setDigitInputsReadOnly(false);
-        console.log("Time's up!");
+        showTimesUpOverlay();
       } else {
         this.timerState = {
           type: "running",
@@ -316,7 +350,6 @@ export class Timer {
   }
 
   updateTimerDisplay(timeDigits: TimeDigits) {
-    console.debug("Updating timer display", getDisplayedDuration(timeDigits));
     for (const [key, value] of Object.entries(timeDigits)) {
       const id = digitKeyToIdMap.get(key);
       // TODO: Does it matter that this causes multiple reflows?
@@ -364,20 +397,4 @@ export class Timer {
       this.disableControlButtons();
     }
   };
-}
-
-function getDisplayedDuration(timeDigits: TimeDigits) {
-  const {
-    hourDigitTens,
-    hourDigitOnes,
-    minuteDigitTens,
-    minuteDigitOnes,
-    secondDigitTens,
-    secondDigitOnes,
-    millisecondDigitHundreds,
-    millisecondDigitTens,
-    millisecondDigitOnes,
-  } = timeDigits;
-
-  return `${hourDigitTens}${hourDigitOnes}:${minuteDigitTens}${minuteDigitOnes}:${secondDigitTens}${secondDigitOnes}.${millisecondDigitHundreds}${millisecondDigitTens}${millisecondDigitOnes}`;
 }

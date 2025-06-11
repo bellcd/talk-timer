@@ -303,3 +303,30 @@ test("allows changing digit inputs when a timer reaches zero", async ({
   await page.keyboard.type("3");
   await expect(digitInput).toHaveValue("3");
 });
+
+test("shows the time's up overlay when the timer finishes", async ({
+  page,
+}) => {
+  await page.locator("#second-digit-ones").fill("1");
+  await page.locator("#start-timer").click();
+  await page.clock.runFor(2000);
+
+  const overlay = page.locator(".times-up-overlay");
+  await expect(overlay).toBeVisible();
+
+  await expect(overlay.locator(".times-up-overlay-message")).toHaveText(
+    /TIME'S UP/i
+  );
+});
+
+test("hides the time's up overlay when the user presses OK", async ({
+  page,
+}) => {
+  await page.locator("#second-digit-ones").fill("1");
+  await page.locator("#start-timer").click();
+  await page.clock.runFor(2000);
+
+  await page.locator(".times-up-overlay-ok-button").click();
+  const overlay = page.locator(".times-up-overlay");
+  await expect(overlay).toBeHidden();
+});
